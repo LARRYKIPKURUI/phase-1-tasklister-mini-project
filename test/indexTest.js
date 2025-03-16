@@ -21,12 +21,12 @@ const dom = new JSDOM(html, {
   resources: "usable"
 });
 
-// Inject the transformed JavaScript into the virtual DOM
+// Inject transformed JavaScript into JSDOM
 const scriptElement = dom.window.document.createElement("script");
 scriptElement.textContent = transformedScript;
 dom.window.document.body.appendChild(scriptElement);
 
-// Expose JSDOM globals to the testing environment
+// Expose JSDOM globals
 global.window = dom.window;
 global.document = dom.window.document;
 global.navigator = dom.window.navigator;
@@ -35,33 +35,42 @@ global.Node = dom.window.Node;
 global.Text = dom.window.Text;
 global.XMLHttpRequest = dom.window.XMLHttpRequest;
 
-// Sample test suite for JavaScript event handling
+// Test suite for form submission
 describe('Handling form submission', () => {
-  let form
-  let formInput
-  let taskList
+  let form;
+  let formInput;
+  let taskList;
 
   before(() => {
-    form = document.querySelector('#create-task-form')
-    formInput = document.querySelector('#new-task-description')
-    taskList = document.querySelector('#tasks')
-  })
-
-  // it('should add an event to the form and add input to webpage', () => {
-  //   // Simulate user input
-  //   formInput.value = 'Wash the dishes'
-  //   const event = new dom.window.Event('submit')
-  //   form.dispatchEvent(event)
-  //   expect(taskList.textContent).to.include('Wash the dishes')
-  // })
-  it('should add an event to the form and add input to webpage', (done) => {
-    formInput.value = 'Wash the dishes';
-    form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+    global.document = dom.window.document;
+    global.window = dom.window;
   
-    setTimeout(() => {
-      expect(taskList.textContent).to.include('Wash the dishes');
-      done(); // Notify Mocha the test is complete
-    }, 10);
+    // Manually execute the script to attach event listeners
+    require('../src/index.js');  // Adjust the path if necessary
+  
+    // Manually trigger DOMContentLoaded
+    const event = new dom.window.document.defaultView.Event('DOMContentLoaded', { bubbles: true, cancelable: true });
+    document.dispatchEvent(event);
+  
+    form = document.querySelector('#create-task-form');
+    formInput = document.querySelector('#new-task-description');
+    taskList = document.querySelector('#tasks');
   });
   
-})
+
+  it('should add an event to the form and add input to webpage', (done) => {
+    formInput.value = 'Wash the dishes';
+  
+    // Dispatch submit event
+    const event = new dom.window.document.defaultView.Event('submit', { bubbles: true, cancelable: true });
+    form.dispatchEvent(event);
+  
+    // Wait for DOM update before asserting
+    setTimeout(() => {
+      console.log('Task List:', taskList.textContent);  // Debugging
+      expect(taskList.textContent).to.include('Wash the dishes');
+      done();
+    }, 50); // Increase timeout to ensure DOM updates
+  });
+  
+});
