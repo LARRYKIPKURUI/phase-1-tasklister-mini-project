@@ -47,11 +47,21 @@ describe('Handling form submission', () => {
     taskList = document.querySelector('#tasks')
   })
 
-  it('should add an event to the form and add input to webpage', () => {
-    // Simulate user input
-    formInput.value = 'Wash the dishes'
-    const event = new dom.window.Event('submit')
-    form.dispatchEvent(event)
-    expect(taskList.textContent).to.include('Wash the dishes')
-  })
+  // it('should add an event to the form and add input to webpage', () => {
+  //   // Simulate user input
+  //   formInput.value = 'Wash the dishes'
+  //   const event = new dom.window.Event('submit')
+  //   form.dispatchEvent(event)
+  //   expect(taskList.textContent).to.include('Wash the dishes')
+  // })
+  it('should add an event to the form and add input to webpage', (done) => {
+    formInput.value = 'Wash the dishes';
+    form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+  
+    setTimeout(() => {
+      expect(taskList.textContent).to.include('Wash the dishes');
+      done(); // Notify Mocha the test is complete
+    }, 10);
+  });
+  
 })

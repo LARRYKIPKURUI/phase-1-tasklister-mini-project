@@ -2,7 +2,7 @@
 document.addEventListener("DOMContentLoaded", () => {
 
   document.getElementById('create-task-form').addEventListener('submit', function (event) {
-    event.preventDefault();
+    event.preventDefault(); //prevent reload
     
     const taskInput = document.getElementById('new-task-description');
     const taskText = taskInput.value.trim(); //Trim input just incase of whitespaces
