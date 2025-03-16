@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const taskInput = document.getElementById('new-task-description');
     const taskText = taskInput.value.trim(); //Trim input just incase of whitespaces
 
-    if (taskText === '') return;
+    if (taskText === '') return; //Avoiding blank to do's...even though  I added the required feature
 
     // Create list item (to add content to the list)
     const li = document.createElement('li');
